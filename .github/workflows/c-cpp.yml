@@ -1,19 +1,15 @@
 name: Build and Package
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
     - name: Install dependencies
       run: |
         sudo apt-get install -y software-properties-common
@@ -24,16 +20,14 @@ jobs:
         git clone https://github.com/microsoft/vcpkg.git
         ./vcpkg/bootstrap-vcpkg.sh
         ./vcpkg/vcpkg install xxhash zstd openssl
-
     - name: Build project
       run: |
         mkdir build
         cd build
         cmake ..
         cmake --build .
-
     - name: Package artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: xeno-executable
         path: build/executable
