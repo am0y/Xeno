@@ -1,30 +1,39 @@
-name: C/C++ CI
+name: Build and Package
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: Create Build Directory
-      run: if [ ! -d "build" ]; then mkdir build; fi
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y software-properties-common
+        sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+        sudo apt-get update
+        sudo apt-get install -y g++-10
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
+        git clone https://github.com/microsoft/vcpkg.git
+        ./vcpkg/bootstrap-vcpkg.sh
+        ./vcpkg/vcpkg install xxhash zstd openssl
 
-    - name: Install Dependencies
-      run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+    - name: Build project
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build .
 
-    - name: Configure CMake
-      run: cd build && cmake ..
-
-    - name: Build
-      run: cd build && cmake --build .
-
-    - name: Test
-      run: cd build && ctest
+    - name: Package artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: xeno-executable
+        path: build/path/to/executable
