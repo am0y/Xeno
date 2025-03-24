@@ -19,10 +19,10 @@ jobs:
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
         git clone https://github.com/microsoft/vcpkg.git
         ./vcpkg/bootstrap-vcpkg.sh
-        ./vcpkg/vcpkg install xxhash zstd openssl --classic
+        ./vcpkg/vcpkg install  # Assumes vcpkg.json exists
     - name: Build project
       run: |
-        mkdir build
+        mkdir -p build  # Changed to mkdir -p
         cd build
         cmake ..
         cmake --build .
