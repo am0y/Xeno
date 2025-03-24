@@ -33,7 +33,7 @@ jobs:
         cmake --build .
 
     - name: Package artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: xeno-executable
-        path: build/path/to/executable
+        path: build/executable
